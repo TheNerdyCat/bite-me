@@ -22,6 +22,7 @@ imageio==2.15.0
 imgaug==0.4.0
 immutables==0.18
 importlib-metadata==4.8.3
+importlib-resources==5.4.0
 ipykernel==5.5.6
 ipython==7.16.3
 ipython-genutils==0.2.0
@@ -83,6 +84,7 @@ testpath==0.6.0
 threadpoolctl==3.1.0
 tifffile==2020.9.3
 tornado==6.1
+tqdm==4.64.0
 traitlets==4.3.3
 typing_extensions==4.1.1
 urllib3==1.26.9
