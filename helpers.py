@@ -10,6 +10,12 @@ import time
 from tqdm import tqdm
 import warnings
 
+from sklearn.model_selection import train_test_split
+
+from constants import ROWS, COLS, CHANNELS, SEED, TEST_SIZE
+
+np.random.seed(SEED)
+
 
 def hash_files(data_dir_path):
     """
@@ -89,11 +95,11 @@ def create_metadata(data_dir_path: str) -> pd.DataFrame:
 
 
 def read_images(data_dir_path: str, 
-                rows:int=512, 
-                cols:int=512, 
-                channels:int=3, 
-                write_images:bool=False, 
-                output_data_dir_path:str=None)->np.array:
+                rows: int=ROWS, 
+                cols: int=COLS, 
+                channels: int=CHANNELS, 
+                write_images: bool=False, 
+                output_data_dir_path: str=None)->np.array:
     """
     Reads all images in all labels/sub-directories in data_dir_path into np.array.
     
@@ -120,7 +126,7 @@ def read_images(data_dir_path: str,
     
     assert len(os.listdir(data_dir_path)) > 0, "Empty parent directory."
     
-    img_array = np.empty(shape=(0, 512, 512, 3), dtype=np.uint8)
+    img_array = np.empty(shape=(0, ROWS, COLS, CHANNELS), dtype=np.uint8)
     
     print(f"Reading images from: {data_dir_path}")
     print(f"Rows set to {rows}")
@@ -184,5 +190,50 @@ def display_img(img: np.array=None) -> None:
     """
     plt.figure()
     plt.imshow(img)
+    
+    
+    
+def get_train_test_split(metadata_df: pd.DataFrame(), test_size: float=TEST_SIZE):
+    """
+    Get indices and labels for train and test splits.
+
+    Parameters
+    ----------
+    metadata_df : np.array 
+        DataFrame containing metadata (labels included).
+    test_size : float 
+        Proportion of test images to return.
+            
+    Returns
+    -------
+    train_idx: list
+        List of indices for training split.
+    test_idx: list
+        List of indices for testing split.
+    y_train: pd.Series
+        Series of labels for training split.
+    y_test: pd.Series
+        Series of labels for testing split.
+    
+    """
+    # Split train/test images
+    train_idx, test_idx = train_test_split(
+        metadata_df.index, 
+        shuffle=True, 
+        random_state=SEED, 
+        test_size=test_size,
+        stratify=metadata_df["label"]
+    )
+    train_idx, test_idx = list(train_idx), list(test_idx)
+    y_train, y_test = metadata_df["label"][train_idx], metadata_df["label"][test_idx]
+
+    print(f"{len(train_idx)} train images")
+    print(f"{len(test_idx)} test images")
+    print("\nTRAIN IMAGE COUNTS\n" + "-"*18)
+    print(y_train.value_counts())
+    print("\nTEST IMAGE COUNTS\n" + "-"*18)
+    print(y_test.value_counts())
+
+    return train_idx, test_idx, y_train, y_test
     
     
