@@ -1,18 +1,26 @@
+# Basic packages
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 import os
-import cv2
 
+# Image processing
+import cv2
+import albumentations as A
+import imgaug as ia
+import imgaug.augmenters as iaa
+
+# Modelling
+from sklearn.model_selection import train_test_split
+
+# Miscallaneous
 import hashlib
 import time
 from tqdm import tqdm
 import warnings
 
-from sklearn.model_selection import train_test_split
-
-from constants import ROWS, COLS, CHANNELS, SEED, TEST_SIZE
+# Local
+from constants import ROWS, COLS, CHANNELS, SEED, TEST_SIZE, VERBOSE
 
 np.random.seed(SEED)
 
@@ -99,7 +107,8 @@ def read_images(data_dir_path: str,
                 cols: int=COLS, 
                 channels: int=CHANNELS, 
                 write_images: bool=False, 
-                output_data_dir_path: str=None)->np.array:
+                output_data_dir_path: str=None,
+                verbose: bool=VERBOSE)->np.array:
     """
     Reads all images in all labels/sub-directories in data_dir_path into np.array.
     
@@ -117,6 +126,9 @@ def read_images(data_dir_path: str,
         Specifies whether to write new images to specified data directory
     output_data_dir_path : str
         If write_images is True, directory path to write new images to.
+    verbose : bool
+        If True, prints verbose logging.
+
     
     Returns
     -------
@@ -128,17 +140,18 @@ def read_images(data_dir_path: str,
     
     img_array = np.empty(shape=(0, ROWS, COLS, CHANNELS), dtype=np.uint8)
     
-    print(f"Reading images from: {data_dir_path}")
-    print(f"Rows set to {rows}")
-    print(f"Columns set to {cols}")
-    print(f"Channels set to {channels}")
-    if write_images:
-        print("\nWriting images to disk!")
-        print(f"Writing images to: {output_data_dir_path}")
-        time.sleep(4)
-    else:
-        print(f"Writing images is set to: {write_images}")
-    print("Reading images...")
+    if verbose:
+        print(f"Reading images from: {data_dir_path}")
+        print(f"Rows set to {rows}")
+        print(f"Columns set to {cols}")
+        print(f"Channels set to {channels}")
+        if write_images:
+            print("\nWriting images to disk!")
+            print(f"Writing images to: {output_data_dir_path}")
+            time.sleep(4)
+        else:
+            print(f"Writing images is set to: {write_images}")
+        print("Reading images...")
     
     # Loop through all labels and images
     for label in os.listdir(data_dir_path):
@@ -168,8 +181,9 @@ def read_images(data_dir_path: str,
                 img_array = np.append(img_array, img_expand, axis=0)
             
     time.sleep(1)
-    print("Image reading complete.")
-    print(f"Image array shape: {img_array.shape}")
+    if verbose:
+        print("Image reading complete.")
+        print(f"Image array shape: {img_array.shape}")
     
     return img_array
 
@@ -193,7 +207,9 @@ def display_img(img: np.array=None) -> None:
     
     
     
-def get_train_test_split(metadata_df: pd.DataFrame(), test_size: float=TEST_SIZE):
+def get_train_test_split(metadata_df: pd.DataFrame(), 
+                         test_size: float=TEST_SIZE,
+                         verbose: bool=VERBOSE):
     """
     Get indices and labels for train and test splits.
 
@@ -203,17 +219,19 @@ def get_train_test_split(metadata_df: pd.DataFrame(), test_size: float=TEST_SIZE
         DataFrame containing metadata (labels included).
     test_size : float 
         Proportion of test images to return.
-            
+    verbose : bool
+        If True, prints verbose logging.
+
     Returns
     -------
     train_idx: list
-        List of indices for training split.
+        List of indimosquito', 'horsefly', 'antces for training split.
     test_idx: list
         List of indices for testing split.
-    y_train: pd.Series
-        Series of labels for training split.
-    y_test: pd.Series
-        Series of labels for testing split.
+    y_train: np.array
+        Array of labels for training split.
+    y_test: np.array
+        Array of labels for testing split.
     
     """
     # Split train/test images
@@ -227,13 +245,96 @@ def get_train_test_split(metadata_df: pd.DataFrame(), test_size: float=TEST_SIZE
     train_idx, test_idx = list(train_idx), list(test_idx)
     y_train, y_test = metadata_df["label"][train_idx], metadata_df["label"][test_idx]
 
-    print(f"{len(train_idx)} train images")
-    print(f"{len(test_idx)} test images")
-    print("\nTRAIN IMAGE COUNTS\n" + "-"*18)
-    print(y_train.value_counts())
-    print("\nTEST IMAGE COUNTS\n" + "-"*18)
-    print(y_test.value_counts())
+    if verbose:
+        print(f"{len(train_idx)} train images")
+        print(f"{len(test_idx)} test images")
+        print("\nTRAIN IMAGE COUNTS\n" + "-"*18)
+        print(y_train.value_counts())
+        print("\nTEST IMAGE COUNTS\n" + "-"*18)
+        print(y_test.value_counts())
 
+    # Convert labels to np.array
+    y_train, y_test = np.array(y_train), np.array(y_test)
+    
     return train_idx, test_idx, y_train, y_test
     
     
+def get_augs(imgs_raw: np.array, 
+             labels_raw: np.array, 
+             keep_originals: bool=True, 
+             verbose: bool=True) -> np.array:
+    """
+    Reads raw images and returns array containing augmented images.
+    
+    Parameters
+    ----------
+    imgs_raw : np.array
+        Array of raw images to augment.
+    labels_raw : np.array
+        Array of raw labels, retaining order in imgs_raw.
+    keep_originals : bool
+        If True, appends augmented images to original array, otherwise only returns augmented images.
+    verbose : bool
+        If True, prints verbose logging.
+    
+    Returns
+    -------
+    imgs_aug : np.array
+        Array containing augmented images. 
+    labels_aug : np.array
+        Array containing augmented labels, replicating order in imgs_aug.
+    augs : np.array
+        Array of augmentations carried out, for logging. 
+
+    """
+    # Define augmentations
+    fliplr = iaa.Sequential([iaa.Fliplr(p=1)])
+    flipud = iaa.Sequential([iaa.Flipud(p=1)])
+    # I can't think of a better way to log augs created so have to manually do the below too
+    augs = np.array([
+        "fliplr",
+        "flipud"
+    ])
+    num_augs = len(augs)
+    
+    if keep_originals == True:
+        # Create augmentations and add to array with original images
+        imgs_aug = np.concatenate(
+            (
+                imgs_raw, # Originals
+                fliplr(images=imgs_raw), # Flip horizontally left to right
+                flipud(images=imgs_raw), # Flip vertically up to down
+            ),
+            axis=0 
+        )
+        
+        # Count number of augmentations
+        labels_aug = np.concatenate(
+            (
+                labels_raw,
+                np.array([labels_raw for i in range(num_augs)]).flatten()
+            ),
+            axis=0
+        )
+
+    elif keep_originals == False:
+        # Create augmentations and add to array without original images
+        imgs_aug = np.concatenate(
+            (
+                fliplr(images=imgs_raw), # Flip horizontally left to right
+                flipud(images=imgs_raw), # Flip vertically up to down
+            ),
+            axis=0 
+        )
+        
+        # Count number of augmentations
+        labels_aug = np.array([labels_raw for i in range(num_augs)]).flatten()
+        
+    # Logging
+    if verbose:
+        print(f"Used augs: {list(augs)}")
+        print(f"Created {imgs_aug.shape[0] - imgs_raw.shape[0]} augmentations.")
+        print(f"Image array shape: {imgs_aug.shape}")
+        print(f"Labels array shape: {labels_aug.shape}")
+    
+    return imgs_aug, labels_aug, augs

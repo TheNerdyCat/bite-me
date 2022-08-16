@@ -11,3 +11,6 @@ TEST_SIZE = 0.1
 
 # Set number of splits for cross-validation
 N_SPLITS = 3
+
+# Verbosity
+VERBOSE = True
