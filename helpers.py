@@ -258,9 +258,10 @@ def get_train_test_split(metadata_df: pd.DataFrame(),
     
     return train_idx, test_idx, y_train, y_test
     
-    
+
 def get_augs(imgs_raw: np.array, 
              labels_raw: np.array, 
+             augs: dict,
              keep_originals: bool=True, 
              verbose: bool=True) -> np.array:
     """
@@ -272,10 +273,12 @@ def get_augs(imgs_raw: np.array,
         Array of raw images to augment.
     labels_raw : np.array
         Array of raw labels, retaining order in imgs_raw.
+    augs : dict
+        Dictionary of augmentations to perform, including arguments, in specified format.        
     keep_originals : bool
         If True, appends augmented images to original array, otherwise only returns augmented images.
     verbose : bool
-        If True, prints verbose logging.
+        If True, prints verbose logging.EPOCHS
     
     Returns
     -------
@@ -283,30 +286,31 @@ def get_augs(imgs_raw: np.array,
         Array containing augmented images. 
     labels_aug : np.array
         Array containing augmented labels, replicating order in imgs_aug.
-    augs : np.array
-        Array of augmentations carried out, for logging. 
-
     """
-    # Define augmentations
-    fliplr = iaa.Sequential([iaa.Fliplr(p=1)])
-    flipud = iaa.Sequential([iaa.Flipud(p=1)])
-    # I can't think of a better way to log augs created so have to manually do the below too
-    augs = np.array([
-        "fliplr",
-        "flipud"
-    ])
-    num_augs = len(augs)
+    # Unpack augmentations
+    augs_list = []
+    for aug_name in augs:
+        # Get augmentation
+        aug = augs[aug_name]["aug"]
+        # Get args dictionary for augmentation
+        args = augs[aug_name]["args"]
+        print(aug(**args))
+        augs_list.append(aug(**args))
+    num_augs = len(augs_list)
+    
     
     if keep_originals == True:
         # Create augmentations and add to array with original images
-        imgs_aug = np.concatenate(
-            (
-                imgs_raw, # Originals
-                fliplr(images=imgs_raw), # Flip horizontally left to right
-                flipud(images=imgs_raw), # Flip vertically up to down
-            ),
-            axis=0 
-        )
+        imgs_aug = imgs_raw.copy()
+        for aug in augs_list:
+            print(aug)
+            imgs_aug = np.concatenate(
+                (
+                    imgs_aug, 
+                    aug(images=imgs_raw)
+                ),
+                axis=0
+            )
         
         # Count number of augmentations
         labels_aug = np.concatenate(
@@ -319,13 +323,15 @@ def get_augs(imgs_raw: np.array,
 
     elif keep_originals == False:
         # Create augmentations and add to array without original images
-        imgs_aug = np.concatenate(
-            (
-                fliplr(images=imgs_raw), # Flip horizontally left to right
-                flipud(images=imgs_raw), # Flip vertically up to down
-            ),
-            axis=0 
-        )
+        imgs_aug = np.array([]).reshape(0, imgs_raw.shape[0], imgs_raw.shape[1], imgs_raw.shape[2])
+        for aug in augs_list:
+            imgs_aug = np.concatenate(
+                (
+                    imgs_aug, 
+                    aug(images=imgs_raw)
+                ),
+                axis=0
+            )
         
         # Count number of augmentations
         labels_aug = np.array([labels_raw for i in range(num_augs)]).flatten()
@@ -337,18 +343,19 @@ def get_augs(imgs_raw: np.array,
         print(f"Image array shape: {imgs_aug.shape}")
         print(f"Labels array shape: {labels_aug.shape}")
     
-    return imgs_aug, labels_aug, augs
+    return imgs_aug, labels_aug
+
 
 augs = {
     "Fliplr": {"aug": iaa.Fliplr, "args": {"p": 1.0}}, 
     "Flipud": {"aug": iaa.Flipud,"args": {"p": 1.0}}, 
     "GaussianBlur": {"aug": iaa.GaussianBlur,"args": {"sigma": 6.0}}, 
     "AverageBlur": {"aug": iaa.AverageBlur,"args": {"k": 20.0}}, 
-    "MotionBlur": {"aug": iaa.MotionBlur,"args": {"k": 15.0}}, 
+    "MotionBlur": {"aug": iaa.MotionBlur,"args": {"k": 15}}, 
     "MultiplyBrightness": {"aug": iaa.MultiplyBrightness,"args": {"mul": 0.5}}, 
     "MultiplyHue": {"aug": iaa.MultiplyHue,"args": {"mul": 0.8}}, 
     "MultiplySaturation": {"aug": iaa.MultiplySaturation,"args": {"mul": 0.5}}, 
-    "Grayscale": {"aug": iaa.Grayscale,"args": {"mul": 0.7}}, 
+    "Grayscale": {"aug": iaa.Grayscale,"args": {"alpha": 0.7}}, 
     "GammaContrast": {"aug": iaa.GammaContrast,"args": {"gamma": 2.0}}, 
     "SigmoidContrast": {"aug": iaa.SigmoidContrast,"args": {"gain": 9.0}}, 
     "LinearContrast": {"aug": iaa.LinearContrast,"args": {"alpha": 2.0}}, 
@@ -360,12 +367,12 @@ augs = {
     "Rotate": {"aug": iaa.Rotate,"args": {"rotate": 45.0}}, 
     "ShearX": {"aug": iaa.ShearX,"args": {"shear": 20.0}}, 
     "ShearY": {"aug": iaa.ShearY,"args": {"shear": 20.0}},
-    "GaussianNoise": {"aug": iaa.imgcorruptlike.GaussianNoise,"args": {"severity": 5.0}}, 
-    "ShotNoise": {"aug": iaa.imgcorruptlike.ShotNoise,"args": {"severity": 5.0}}, 
-    "ImpulseNoise": { "aug": iaa.imgcorruptlike.ImpulseNoise,"args": {"severity": 5.0}}, 
-    "SpeckleNoise": {"aug": iaa.imgcorruptlike.SpeckleNoise,"args": {"severity": 5.0}}, 
-    "DefocusBlur": {"aug": iaa.imgcorruptlike.DefocusBlur,"args": {"severity": 5.0}}, 
-    "ZoomBlur": {"aug": iaa.imgcorruptlike.ZoomBlur,"args": {"severity": 4.0}}, 
+    "GaussianNoise": {"aug": iaa.imgcorruptlike.GaussianNoise,"args": {"severity": 5}}, 
+    "ShotNoise": {"aug": iaa.imgcorruptlike.ShotNoise,"args": {"severity": 5}}, 
+    "ImpulseNoise": { "aug": iaa.imgcorruptlike.ImpulseNoise,"args": {"severity": 5}}, 
+    "SpeckleNoise": {"aug": iaa.imgcorruptlike.SpeckleNoise,"args": {"severity": 5}}, 
+    "DefocusBlur": {"aug": iaa.imgcorruptlike.DefocusBlur,"args": {"severity": 5}}, 
+    "ZoomBlur": {"aug": iaa.imgcorruptlike.ZoomBlur,"args": {"severity": 4}}, 
     "Contrast": {"aug": iaa.imgcorruptlike.Contrast,"args": {"severity": 2.0}}, 
     "Brightness": {"aug": iaa.imgcorruptlike.Brightness,"args": {"severity": 2.0}},
     "Saturate": {"aug": iaa.imgcorruptlike.Saturate,"args": {"severity": 2.0}}, 
