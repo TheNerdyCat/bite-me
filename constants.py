@@ -15,5 +15,4 @@ N_SPLITS = 3
 # Verbosity
 VERBOSE = True
 
-# Modelling constants
-EPOCHS = 6
+

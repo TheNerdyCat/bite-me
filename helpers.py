@@ -91,12 +91,17 @@ def create_metadata(data_dir_path: str) -> pd.DataFrame:
                 
                 if ".jpg" in img_name_path:
                     # Add to metadata
-                    data_metadata = data_metadata.append(
-                        {
-                            "img_name": img_name, 
-                            "img_path": img_name_path, 
-                            "label": label
-                        }, ignore_index=True
+                    data_metadata = pd.concat(
+                        [
+                            data_metadata,
+                            pd.DataFrame(
+                                {
+                                    "img_name": img_name, 
+                                    "img_path": img_name_path, 
+                                    "label": label
+                                }
+                            )
+                        ], ignore_index=True
                     )            
     
     return data_metadata
