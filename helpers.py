@@ -94,18 +94,17 @@ def create_metadata(data_dir_path: str) -> pd.DataFrame:
                     data_metadata = pd.concat(
                         [
                             data_metadata,
-                            pd.DataFrame(
+                            pd.DataFrame.from_dict(
                                 {
-                                    "img_name": img_name, 
-                                    "img_path": img_name_path, 
-                                    "label": label
+                                    "img_name": [img_name], 
+                                    "img_path": [img_name_path], 
+                                    "label": [label]
                                 }
                             )
                         ], ignore_index=True
                     )            
     
     return data_metadata
-
 
 def read_images(data_dir_path: str, 
                 rows: int=ROWS, 
@@ -162,9 +161,9 @@ def read_images(data_dir_path: str,
     for label in os.listdir(data_dir_path):
         # Label/sub dir path
         label_path = os.path.join(data_dir_path, label)
-        
+
         # Check for directory
-        if os.path.isdir(label_path) & (label[0] != "."):
+        if os.path.isdir(label_path) & (label != "."):
             for img_name in tqdm(os.listdir(label_path)):
                 # Individual image path
                 img_path = os.path.join(label_path, img_name)
@@ -177,6 +176,7 @@ def read_images(data_dir_path: str,
                 if write_images:
                     label_path_write = os.path.join(output_data_dir_path, label)
                     img_path_write = os.path.join(label_path_write, img_name)
+
                     if os.path.isdir(label_path_write):
                         cv2.imwrite(img_path_write, img)
                     else:
@@ -354,44 +354,44 @@ def get_augs(imgs_raw: np.array,
 augs = {
     "Fliplr": {"aug": iaa.Fliplr, "args": {"p": 1.0}}, 
     "Flipud": {"aug": iaa.Flipud,"args": {"p": 1.0}}, 
-    "GaussianBlur": {"aug": iaa.GaussianBlur,"args": {"sigma": 6.0}}, 
-    "AverageBlur": {"aug": iaa.AverageBlur,"args": {"k": 20.0}}, 
-    "MotionBlur": {"aug": iaa.MotionBlur,"args": {"k": 15}}, 
-    "MultiplyBrightness": {"aug": iaa.MultiplyBrightness,"args": {"mul": 0.5}}, 
-    "MultiplyHue": {"aug": iaa.MultiplyHue,"args": {"mul": 0.8}}, 
-    "MultiplySaturation": {"aug": iaa.MultiplySaturation,"args": {"mul": 0.5}}, 
-    "Grayscale": {"aug": iaa.Grayscale,"args": {"alpha": 0.7}}, 
-    "GammaContrast": {"aug": iaa.GammaContrast,"args": {"gamma": 2.0}}, 
-    "SigmoidContrast": {"aug": iaa.SigmoidContrast,"args": {"gain": 9.0}}, 
-    "LinearContrast": {"aug": iaa.LinearContrast,"args": {"alpha": 2.0}}, 
+    "GaussianBlur": {"aug": iaa.GaussianBlur,"args": {"sigma": 2.0}}, 
+    "AverageBlur": {"aug": iaa.AverageBlur,"args": {"k": 5.0}}, 
+    "MotionBlur": {"aug": iaa.MotionBlur,"args": {"k": 8}}, 
+    "MultiplyBrightness": {"aug": iaa.MultiplyBrightness,"args": {"mul": 0.8}}, 
+    "MultiplyHue": {"aug": iaa.MultiplyHue,"args": {"mul": 1.2}}, 
+    "MultiplySaturation": {"aug": iaa.MultiplySaturation,"args": {"mul": 0.4}}, 
+    "Grayscale": {"aug": iaa.Grayscale,"args": {"alpha": 1}}, 
+    "GammaContrast": {"aug": iaa.GammaContrast,"args": {"gamma": 0.6}}, 
+    "SigmoidContrast": {"aug": iaa.SigmoidContrast,"args": {"gain": 2.0}}, 
+    "LinearContrast": {"aug": iaa.LinearContrast,"args": {"alpha": 0.6}}, 
     "Affine": {"aug": iaa.Affine,"args": {"scale": 0.8}}, 
     "ScaleX": {"aug": iaa.ScaleX,"args": {"scale": 0.8}}, 
     "ScaleY": {"aug": iaa.ScaleY,"args": {"scale": 0.8}}, 
     "TranslateX": {"aug": iaa.TranslateX,"args": {"percent": 0.1}}, 
     "TranslateY": {"aug": iaa.TranslateY,"args": {"percent": 0.1}}, 
-    "Rotate": {"aug": iaa.Rotate,"args": {"rotate": 45.0}}, 
+    "Rotate": {"aug": iaa.Rotate,"args": {"rotate": 90.0}}, 
     "ShearX": {"aug": iaa.ShearX,"args": {"shear": 20.0}}, 
     "ShearY": {"aug": iaa.ShearY,"args": {"shear": 20.0}},
-    "GaussianNoise": {"aug": iaa.imgcorruptlike.GaussianNoise,"args": {"severity": 5}}, 
-    "ShotNoise": {"aug": iaa.imgcorruptlike.ShotNoise,"args": {"severity": 5}}, 
-    "ImpulseNoise": { "aug": iaa.imgcorruptlike.ImpulseNoise,"args": {"severity": 5}}, 
-    "SpeckleNoise": {"aug": iaa.imgcorruptlike.SpeckleNoise,"args": {"severity": 5}}, 
-    "DefocusBlur": {"aug": iaa.imgcorruptlike.DefocusBlur,"args": {"severity": 5}}, 
-    "ZoomBlur": {"aug": iaa.imgcorruptlike.ZoomBlur,"args": {"severity": 4}}, 
-    "Contrast": {"aug": iaa.imgcorruptlike.Contrast,"args": {"severity": 2}}, 
-    "Brightness": {"aug": iaa.imgcorruptlike.Brightness,"args": {"severity": 2}},
-    "Saturate": {"aug": iaa.imgcorruptlike.Saturate,"args": {"severity": 2}}, 
+    "GaussianNoise": {"aug": iaa.imgcorruptlike.GaussianNoise,"args": {"severity": 1}}, 
+    "ShotNoise": {"aug": iaa.imgcorruptlike.ShotNoise,"args": {"severity": 1}}, 
+    "ImpulseNoise": { "aug": iaa.imgcorruptlike.ImpulseNoise,"args": {"severity": 1}}, 
+    "SpeckleNoise": {"aug": iaa.imgcorruptlike.SpeckleNoise,"args": {"severity": 1}}, 
+    "DefocusBlur": {"aug": iaa.imgcorruptlike.DefocusBlur,"args": {"severity": 2}}, 
+    "ZoomBlur": {"aug": iaa.imgcorruptlike.ZoomBlur,"args": {"severity": 1}}, 
+    "Contrast": {"aug": iaa.imgcorruptlike.Contrast,"args": {"severity": 1}}, 
+    "Brightness": {"aug": iaa.imgcorruptlike.Brightness,"args": {"severity": 1}},
+    "Saturate": {"aug": iaa.imgcorruptlike.Saturate,"args": {"severity": 1}}, 
     "Solarize": {"aug": iaa.Solarize,"args": {"threshold": 1}}, 
-    "EnhanceColor": {"aug": iaa.pillike.EnhanceColor,"args": {"factor": 4.0}}, 
-    "EnhanceContrast": {"aug": iaa.pillike.EnhanceContrast,"args": {"factor": 2.0}}, 
-    "EnhanceBrightness": {"aug": iaa.pillike.EnhanceBrightness,"args": {"factor": 1.4}}, 
-    "EnhanceSharpness": {"aug": iaa.pillike.EnhanceSharpness,"args": {"factor": 10.0}}, 
-    "AdditiveGaussianNoise": {"aug": iaa.AdditiveGaussianNoise,"args": {"loc": 50.0}}, 
-    "AdditiveLaplaceNoise": {"aug": iaa.AdditiveLaplaceNoise,"args": {"loc": 50.0}}, 
-    "AdditivePoissonNoise": {"aug": iaa.AdditivePoissonNoise,"args": {"lam": 20.0}}, 
+    "EnhanceColor": {"aug": iaa.pillike.EnhanceColor,"args": {"factor": 0.5}}, 
+    "EnhanceContrast": {"aug": iaa.pillike.EnhanceContrast,"args": {"factor": 0.7}}, 
+    "EnhanceBrightness": {"aug": iaa.pillike.EnhanceBrightness,"args": {"factor": 0.7}}, 
+    "EnhanceSharpness": {"aug": iaa.pillike.EnhanceSharpness,"args": {"factor": 4.0}}, 
+    "AdditiveGaussianNoise": {"aug": iaa.AdditiveGaussianNoise,"args": {"loc": 2.0}}, 
+    "AdditiveLaplaceNoise": {"aug": iaa.AdditiveLaplaceNoise,"args": {"loc": 2.0}}, 
+    "AdditivePoissonNoise": {"aug": iaa.AdditivePoissonNoise,"args": {"lam": 10.0}}, 
     "Cutout": {"aug": iaa.Cutout,"args": {"nb_iterations": 1,"size": 0.2,"fill_mode": "gaussian","fill_per_channel": True}}, 
-    "Dropout": {"aug": iaa.Dropout,"args": {"p": 0.2,"per_channel": 0.5}}, 
-    "CoarseDropout": {"aug": iaa.CoarseDropout,"args": {"size_percent": 0.5}}, 
-    "ImpulseNoise": {"aug": iaa.ImpulseNoise,"args": {"p": 0.1}}, 
-    "SaltAndPepper": {"aug": iaa.SaltAndPepper,"args": {"p": 0.1}}
+    "Dropout": {"aug": iaa.Dropout,"args": {"p": 0.02,"per_channel": 0.2}}, 
+    "CoarseDropout": {"aug": iaa.CoarseDropout,"args": {"size_percent": 0.4}}, 
+    "ImpulseNoise": {"aug": iaa.ImpulseNoise,"args": {"p": 0.05}}, 
+    "SaltAndPepper": {"aug": iaa.SaltAndPepper,"args": {"p": 0.03}}
 }
