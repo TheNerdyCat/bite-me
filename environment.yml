@@ -27,9 +27,9 @@ dependencies:
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.18.1=h7f98852_0
   - c-blosc2=2.3.1=h7a311fb_0
-  - ca-certificates=2022.6.15=ha878542_0
+  - ca-certificates=2022.07.19=h06a4308_0
   - cairo=1.16.0=ha12eb4b_1010
-  - certifi=2022.6.15=pyhd8ed1ab_1
+  - certifi=2022.6.15=py39h06a4308_0
   - cffi=1.15.1=py39he91dace_0
   - cfitsio=4.1.0=hd9d235c_0
   - charls=2.3.4=h9c3ff4c_0

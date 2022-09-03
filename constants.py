@@ -15,4 +15,5 @@ N_SPLITS = 3
 # Verbosity
 VERBOSE = True
 
-
+PRECISION = 16
+GRADIENT_CLIP_VAL = 1.0

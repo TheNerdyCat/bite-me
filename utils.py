@@ -12,6 +12,7 @@ import imgaug.augmenters as iaa
 
 # Modelling
 from sklearn.model_selection import train_test_split
+import torch
 
 # Miscallaneous
 import hashlib
@@ -414,7 +415,6 @@ def seed_reproducer(seed=SEED):
     None
     
     """
-    random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
