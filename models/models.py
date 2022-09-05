@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import pretrainedmodels
+import ssl
 
 
 def l2_norm(input, axis=1):
@@ -10,7 +11,7 @@ def l2_norm(input, axis=1):
 
 
 class BinaryHead(nn.Module):
-    def __init__(self, num_class=4, emb_size=2048, s=16.0):
+    def __init__(self, num_class=8, emb_size=2048, s=16.0):
         super(BinaryHead, self).__init__()
         self.s = s
         self.fc = nn.Sequential(nn.Linear(emb_size, num_class))
@@ -25,19 +26,21 @@ class se_resnet50(nn.Module):
     def __init__(self):
         super(se_resnet50, self).__init__()
         
-        #self.model_ft = nn.Sequential(
-        #    *list(pretrainedmodels.__dict__["se_resnext50_32x4d"](num_classes=1000, pretrained="imagenet").children())[
-        #        :-2
-        #    ]
-        #)        
+        # Workaround for SSL errors on calling pretrained models
+        # https://github.com/pytorch/pytorch/issues/33288#issuecomment-954160699
+        ssl._create_default_https_context = ssl._create_unverified_context
+        
         self.model_ft = nn.Sequential(
-            pretrainedmodels.__dict__["se_resnet50"]
-        )        
+            *list(pretrainedmodels.__dict__["se_resnet50"](num_classes=1000, pretrained="imagenet").children())[
+                :-2
+            ]
+        )   
+        
         self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
         self.model_ft.last_linear = None
         self.fea_bn = nn.BatchNorm1d(2048)
         self.fea_bn.bias.requires_grad_(False)
-        self.binary_head = BinaryHead(4, emb_size=2048, s=1)
+        self.binary_head = BinaryHead(8, emb_size=2048, s=1)
         self.dropout = nn.Dropout(p=0.2)
 
     def forward(self, x):
