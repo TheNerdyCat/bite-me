@@ -24,7 +24,7 @@ from logging import Logger
 from logging.handlers import TimedRotatingFileHandler
 
 # Local
-from utils.constants import ROWS, COLS, CHANNELS, SEED, TEST_SIZE, VERBOSE
+from utils.constants import *
 
 
 
@@ -448,12 +448,14 @@ def mkdir(path: str):
         os.makedirs(path)
         
         
-def init_logger(log_name, log_dir=None):
+def init_logger(log_name, log_dir=LOG_DIR):
     """
     ADD DOCSTRING
     """
 
-    mkdir(log_dir)
+    mkdir(
+        os.path.join(log_dir, log_name)
+    )
 
     if log_name not in Logger.manager.loggerDict:
         logging.root.handlers.clear()
@@ -471,7 +473,7 @@ def init_logger(log_name, log_dir=None):
 
         if log_dir is not None:
             file_info_handler = TimedRotatingFileHandler(
-                filename=os.path.join(log_dir, "%s.log" % log_name), when="D", backupCount=7
+                filename=os.path.join(log_dir, log_name, "%s.log" % log_name), when="D", backupCount=7
             )
             file_info_handler.setFormatter(formatter)
             file_info_handler.setLevel(logging.INFO)

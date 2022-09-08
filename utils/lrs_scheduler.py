@@ -5,15 +5,18 @@ from torch.optim import lr_scheduler
 
 
 class WarmRestart(lr_scheduler.CosineAnnealingLR):
-    """This class implements Stochastic Gradient Descent with Warm Restarts(SGDR): https://arxiv.org/abs/1608.03983.
+    """
+    This class implements Stochastic Gradient Descent with Warm Restarts(SGDR): https://arxiv.org/abs/1608.03983.
     Set the learning rate of each parameter group using a cosine annealing schedule,
     When last_epoch=-1, sets initial lr as lr.
-    This can't support scheduler.step(epoch). please keep epoch=None.
+    This can't support scheduler.step(epoch). Please keep epoch=None.
     """
 
     def __init__(self, optimizer, T_max=10, T_mult=2, eta_min=0, last_epoch=-1):
-        """implements SGDR
-        Parameters:
+        """
+        Implements SGDR
+        
+        Parameters
         ----------
         T_max : int
             Maximum number of epochs.
@@ -23,6 +26,10 @@ class WarmRestart(lr_scheduler.CosineAnnealingLR):
             Minimum learning rate. Default: 0.
         last_epoch : int
             The index of last epoch. Default: -1.
+            
+        Returns
+        --------
+        None
         """
         self.T_mult = T_mult
         super().__init__(optimizer, T_max, eta_min, last_epoch)
@@ -38,11 +45,14 @@ class WarmRestart(lr_scheduler.CosineAnnealingLR):
 
 
 def warm_restart(scheduler, T_mult=2):
-    """warm restart policy
-    Parameters:
+    """
+    Warm restart policy
+
+    Parameters
     ----------
     T_mult: int
         default is 2, Stochastic Gradient Descent with Warm Restarts(SGDR): https://arxiv.org/abs/1608.03983.
+        
     Examples:
     --------
     >>> # some other operations(note the order of operations)
