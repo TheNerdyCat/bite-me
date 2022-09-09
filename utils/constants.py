@@ -2,8 +2,8 @@ import torch
 import datetime
 
 # Set img dimension constants
-ROWS = 512
-COLS = 512
+ROWS = 1536
+COLS = 1536
 CHANNELS = 3
 
 # Set seed

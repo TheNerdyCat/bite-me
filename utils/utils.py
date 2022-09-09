@@ -267,6 +267,53 @@ def get_train_test_split(metadata_df: pd.DataFrame(),
     return train_idx, test_idx, y_train, y_test
     
 
+# Can't think of a better way to save the augmentations dictionary than this
+# Given that it doesn't just contain simple objects, but actual functions
+augs = {
+    "Fliplr": {"aug": iaa.Fliplr, "args": {"p": 1.0}}, 
+    "Flipud": {"aug": iaa.Flipud,"args": {"p": 1.0}}, 
+    "GaussianBlur": {"aug": iaa.GaussianBlur,"args": {"sigma": 2.0}}, 
+    "AverageBlur": {"aug": iaa.AverageBlur,"args": {"k": 5.0}}, 
+    "MotionBlur": {"aug": iaa.MotionBlur,"args": {"k": 8}}, 
+    "MultiplyBrightness": {"aug": iaa.MultiplyBrightness,"args": {"mul": 0.8}}, 
+    "MultiplyHue": {"aug": iaa.MultiplyHue,"args": {"mul": 1.2}}, 
+    "MultiplySaturation": {"aug": iaa.MultiplySaturation,"args": {"mul": 0.4}}, 
+    "Grayscale": {"aug": iaa.Grayscale,"args": {"alpha": 1}}, 
+    "GammaContrast": {"aug": iaa.GammaContrast,"args": {"gamma": 0.6}}, 
+    "SigmoidContrast": {"aug": iaa.SigmoidContrast,"args": {"gain": 2.0}}, 
+    "LinearContrast": {"aug": iaa.LinearContrast,"args": {"alpha": 0.6}}, 
+    "Affine": {"aug": iaa.Affine,"args": {"scale": 0.8}}, 
+    "ScaleX": {"aug": iaa.ScaleX,"args": {"scale": 0.8}}, 
+    "ScaleY": {"aug": iaa.ScaleY,"args": {"scale": 0.8}}, 
+    "TranslateX": {"aug": iaa.TranslateX,"args": {"percent": 0.1}}, 
+    "TranslateY": {"aug": iaa.TranslateY,"args": {"percent": 0.1}}, 
+    "Rotate": {"aug": iaa.Rotate,"args": {"rotate": 90.0}}, 
+    "ShearX": {"aug": iaa.ShearX,"args": {"shear": 20.0}}, 
+    "ShearY": {"aug": iaa.ShearY,"args": {"shear": 20.0}},
+    "GaussianNoise": {"aug": iaa.imgcorruptlike.GaussianNoise,"args": {"severity": 1}}, 
+    "ShotNoise": {"aug": iaa.imgcorruptlike.ShotNoise,"args": {"severity": 1}}, 
+    "ImpulseNoise": { "aug": iaa.imgcorruptlike.ImpulseNoise,"args": {"severity": 1}}, 
+    "SpeckleNoise": {"aug": iaa.imgcorruptlike.SpeckleNoise,"args": {"severity": 1}}, 
+    "DefocusBlur": {"aug": iaa.imgcorruptlike.DefocusBlur,"args": {"severity": 2}}, 
+    "ZoomBlur": {"aug": iaa.imgcorruptlike.ZoomBlur,"args": {"severity": 1}}, 
+    "Contrast": {"aug": iaa.imgcorruptlike.Contrast,"args": {"severity": 1}}, 
+    "Brightness": {"aug": iaa.imgcorruptlike.Brightness,"args": {"severity": 1}},
+    "Saturate": {"aug": iaa.imgcorruptlike.Saturate,"args": {"severity": 1}}, 
+    "Solarize": {"aug": iaa.Solarize,"args": {"threshold": 1}}, 
+    "EnhanceColor": {"aug": iaa.pillike.EnhanceColor,"args": {"factor": 0.5}}, 
+    "EnhanceContrast": {"aug": iaa.pillike.EnhanceContrast,"args": {"factor": 0.7}}, 
+    "EnhanceBrightness": {"aug": iaa.pillike.EnhanceBrightness,"args": {"factor": 0.7}}, 
+    "EnhanceSharpness": {"aug": iaa.pillike.EnhanceSharpness,"args": {"factor": 4.0}}, 
+    "AdditiveGaussianNoise": {"aug": iaa.AdditiveGaussianNoise,"args": {"loc": 2.0}}, 
+    "AdditiveLaplaceNoise": {"aug": iaa.AdditiveLaplaceNoise,"args": {"loc": 2.0}}, 
+    "AdditivePoissonNoise": {"aug": iaa.AdditivePoissonNoise,"args": {"lam": 10.0}}, 
+    "Cutout": {"aug": iaa.Cutout,"args": {"nb_iterations": 1,"size": 0.2,"fill_mode": "gaussian","fill_per_channel": True}}, 
+    "Dropout": {"aug": iaa.Dropout,"args": {"p": 0.02,"per_channel": 0.2}}, 
+    "CoarseDropout": {"aug": iaa.CoarseDropout,"args": {"size_percent": 0.4}}, 
+    "ImpulseNoise": {"aug": iaa.ImpulseNoise,"args": {"p": 0.05}}, 
+    "SaltAndPepper": {"aug": iaa.SaltAndPepper,"args": {"p": 0.03}}
+}
+
 def get_augs(imgs_raw: np.array, 
              labels_raw: np.array, 
              augs: dict,
@@ -350,54 +397,6 @@ def get_augs(imgs_raw: np.array,
         print(f"Labels array shape: {labels_aug.shape}")
     
     return imgs_aug, labels_aug
-
-
-# Can't think of a better way to save the augmentations dictionary than this
-# Given that it doesn't just contain simple objects, but actual functions
-augs = {
-    "Fliplr": {"aug": iaa.Fliplr, "args": {"p": 1.0}}, 
-    "Flipud": {"aug": iaa.Flipud,"args": {"p": 1.0}}, 
-    "GaussianBlur": {"aug": iaa.GaussianBlur,"args": {"sigma": 2.0}}, 
-    "AverageBlur": {"aug": iaa.AverageBlur,"args": {"k": 5.0}}, 
-    "MotionBlur": {"aug": iaa.MotionBlur,"args": {"k": 8}}, 
-    "MultiplyBrightness": {"aug": iaa.MultiplyBrightness,"args": {"mul": 0.8}}, 
-    "MultiplyHue": {"aug": iaa.MultiplyHue,"args": {"mul": 1.2}}, 
-    "MultiplySaturation": {"aug": iaa.MultiplySaturation,"args": {"mul": 0.4}}, 
-    "Grayscale": {"aug": iaa.Grayscale,"args": {"alpha": 1}}, 
-    "GammaContrast": {"aug": iaa.GammaContrast,"args": {"gamma": 0.6}}, 
-    "SigmoidContrast": {"aug": iaa.SigmoidContrast,"args": {"gain": 2.0}}, 
-    "LinearContrast": {"aug": iaa.LinearContrast,"args": {"alpha": 0.6}}, 
-    "Affine": {"aug": iaa.Affine,"args": {"scale": 0.8}}, 
-    "ScaleX": {"aug": iaa.ScaleX,"args": {"scale": 0.8}}, 
-    "ScaleY": {"aug": iaa.ScaleY,"args": {"scale": 0.8}}, 
-    "TranslateX": {"aug": iaa.TranslateX,"args": {"percent": 0.1}}, 
-    "TranslateY": {"aug": iaa.TranslateY,"args": {"percent": 0.1}}, 
-    "Rotate": {"aug": iaa.Rotate,"args": {"rotate": 90.0}}, 
-    "ShearX": {"aug": iaa.ShearX,"args": {"shear": 20.0}}, 
-    "ShearY": {"aug": iaa.ShearY,"args": {"shear": 20.0}},
-    "GaussianNoise": {"aug": iaa.imgcorruptlike.GaussianNoise,"args": {"severity": 1}}, 
-    "ShotNoise": {"aug": iaa.imgcorruptlike.ShotNoise,"args": {"severity": 1}}, 
-    "ImpulseNoise": { "aug": iaa.imgcorruptlike.ImpulseNoise,"args": {"severity": 1}}, 
-    "SpeckleNoise": {"aug": iaa.imgcorruptlike.SpeckleNoise,"args": {"severity": 1}}, 
-    "DefocusBlur": {"aug": iaa.imgcorruptlike.DefocusBlur,"args": {"severity": 2}}, 
-    "ZoomBlur": {"aug": iaa.imgcorruptlike.ZoomBlur,"args": {"severity": 1}}, 
-    "Contrast": {"aug": iaa.imgcorruptlike.Contrast,"args": {"severity": 1}}, 
-    "Brightness": {"aug": iaa.imgcorruptlike.Brightness,"args": {"severity": 1}},
-    "Saturate": {"aug": iaa.imgcorruptlike.Saturate,"args": {"severity": 1}}, 
-    "Solarize": {"aug": iaa.Solarize,"args": {"threshold": 1}}, 
-    "EnhanceColor": {"aug": iaa.pillike.EnhanceColor,"args": {"factor": 0.5}}, 
-    "EnhanceContrast": {"aug": iaa.pillike.EnhanceContrast,"args": {"factor": 0.7}}, 
-    "EnhanceBrightness": {"aug": iaa.pillike.EnhanceBrightness,"args": {"factor": 0.7}}, 
-    "EnhanceSharpness": {"aug": iaa.pillike.EnhanceSharpness,"args": {"factor": 4.0}}, 
-    "AdditiveGaussianNoise": {"aug": iaa.AdditiveGaussianNoise,"args": {"loc": 2.0}}, 
-    "AdditiveLaplaceNoise": {"aug": iaa.AdditiveLaplaceNoise,"args": {"loc": 2.0}}, 
-    "AdditivePoissonNoise": {"aug": iaa.AdditivePoissonNoise,"args": {"lam": 10.0}}, 
-    "Cutout": {"aug": iaa.Cutout,"args": {"nb_iterations": 1,"size": 0.2,"fill_mode": "gaussian","fill_per_channel": True}}, 
-    "Dropout": {"aug": iaa.Dropout,"args": {"p": 0.02,"per_channel": 0.2}}, 
-    "CoarseDropout": {"aug": iaa.CoarseDropout,"args": {"size_percent": 0.4}}, 
-    "ImpulseNoise": {"aug": iaa.ImpulseNoise,"args": {"p": 0.05}}, 
-    "SaltAndPepper": {"aug": iaa.SaltAndPepper,"args": {"p": 0.03}}
-}
 
 
 def seed_reproducer(seed=SEED):

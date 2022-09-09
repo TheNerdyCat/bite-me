@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import torch
-from albumentations import Compose, Normalize, Resize
+import albumentations as A
 
 from torch.utils.data import DataLoader, Dataset
 
@@ -50,32 +50,24 @@ def generate_transforms(image_size):
     """
     ADD DOCSTRING
     """
-
-    train_transform = Compose(
+    
+    train_transform = A.Compose(
         [
-            Resize(height=image_size[0], width=image_size[1]),
-            #OneOf([RandomBrightness(limit=0.1, p=1), RandomContrast(limit=0.1, p=1)]),
-            #OneOf([MotionBlur(blur_limit=3), MedianBlur(blur_limit=3), GaussianBlur(blur_limit=3)], p=0.5),
-            #VerticalFlip(p=0.5),
-            #HorizontalFlip(p=0.5),
-            #ShiftScaleRotate(
-            #    shift_limit=0.2,
-            #    scale_limit=0.2,
-            #    rotate_limit=20,
-            #    interpolation=cv2.INTER_LINEAR,
-            #    border_mode=cv2.BORDER_REFLECT_101,
-            #    p=1,
-            #),
-            Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), max_pixel_value=255.0, p=1.0),
+            A.Resize(height=image_size[0], width=image_size[1]),
+            A.RandomBrightnessContrast(p=0.5),
+            A.OneOf([A.MotionBlur(), A.MedianBlur(), A.GaussianBlur()], p=0.5),
+            A.VerticalFlip(p=0.5),
+            A.HorizontalFlip(p=0.5),
+            A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), max_pixel_value=255.0, p=1.0),
         ]
     )
-
-    val_transform = Compose(
+    val_transform = A.Compose(
         [
-            Resize(height=image_size[0], width=image_size[1]),
-            Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), max_pixel_value=255.0, p=1.0),
+            A.Resize(height=image_size[0], width=image_size[1]),
+            A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), max_pixel_value=255.0, p=1.0),
         ]
     )
+    
 
     return {"train_transforms": train_transform, "val_transforms": val_transform}
 
