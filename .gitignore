@@ -132,3 +132,7 @@ dmypy.json
 data
 data/
 data/*
+
+# Model weight files
+*ckpt
+*pth
