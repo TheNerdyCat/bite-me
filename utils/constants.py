@@ -2,8 +2,8 @@ import torch
 import datetime
 
 # Set img dimension constants
-ROWS = 1536
-COLS = 1536
+ROWS = 1024
+COLS = 1024
 CHANNELS = 3
 
 # Set seed
@@ -20,18 +20,20 @@ TEST_SIZE = 0.1
 N_SPLITS = 3
 
 # Batch sizes
-TRAIN_BATCH_SIZE = 8
-VAL_BATCH_SIZE = 8
+TRAIN_BATCH_SIZE = 4
+VAL_BATCH_SIZE = 4
 
 # Verbosity
 VERBOSE = True
 
 # Choose model
-MODEL_NAME = "se_resnet50"
+MODEL_NAME = "resnet50"
 
 # Number of epochs
-MIN_EPOCHS = 20
+MIN_EPOCHS = 30
 MAX_EPOCHS = 50
+
+PATIENCE = 11
 
 PRECISION = 16
 GRADIENT_CLIP_VAL = 1.0

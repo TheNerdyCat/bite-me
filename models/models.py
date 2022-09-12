@@ -3,6 +3,8 @@ import torch.nn as nn
 import pretrainedmodels
 import ssl
 
+from utils.constants import *
+
 
 def l2_norm(input, axis=1):
     norm = torch.norm(input, 2, axis, True)
@@ -31,7 +33,7 @@ class se_resnet50(nn.Module):
         ssl._create_default_https_context = ssl._create_unverified_context
         
         self.model_ft = nn.Sequential(
-            *list(pretrainedmodels.__dict__["se_resnet50"](num_classes=1000, pretrained="imagenet").children())[
+            *list(pretrainedmodels.__dict__[MODEL_NAME](num_classes=1000, pretrained="imagenet").children())[
                 :-2
             ]
         )   
