@@ -27,11 +27,11 @@ VAL_BATCH_SIZE = 4
 VERBOSE = True
 
 # Choose model
-MODEL_NAME = "resnet50"
+MODEL_NAME = "resnet152"
 
 # Number of epochs
-MIN_EPOCHS = 30
-MAX_EPOCHS = 50
+MIN_EPOCHS = 50
+MAX_EPOCHS = 70
 
 PATIENCE = 11
 

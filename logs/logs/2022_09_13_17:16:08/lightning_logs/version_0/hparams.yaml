@@ -1,0 +1,22 @@
+backbone: resnet101
+device_name: NVIDIA GeForce RTX 3090
+fold_i: 0
+gpus:
+- 0
+gradient_clip_val: 1.0
+image_size:
+- 1024
+- 1024
+log_dir: ../logs/logs
+log_name: '2022_09_13_17:16:08'
+max_epochs: 70
+min_epochs: 50
+n_splits: 3
+n_workers: 128
+patience: 11
+precision: 16
+seed: 14
+test_size: 0.1
+train_batch_size: 2
+val_batch_size: 2
+verbose: true
