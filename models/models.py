@@ -51,7 +51,7 @@ class se_resnet50(nn.Module):
         img_feature = self.avg_pool(img_feature)
         img_feature = img_feature.view(img_feature.size(0), -1)
         fea = self.fea_bn(img_feature)
-        # fea = self.dropout(fea)
+        #fea = self.dropout(fea)
         output = self.binary_head(fea)
 
         return output

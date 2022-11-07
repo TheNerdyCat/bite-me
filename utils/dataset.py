@@ -54,8 +54,8 @@ def generate_transforms(image_size):
     train_transform = A.Compose(
         [
             A.Resize(height=image_size[0], width=image_size[1]),
-            A.RandomBrightnessContrast(p=0.5),
-            A.OneOf([A.MotionBlur(), A.MedianBlur(), A.GaussianBlur()], p=0.5),
+            #A.RandomBrightnessContrast(p=0.5),
+            #A.OneOf([A.MotionBlur(), A.MedianBlur(), A.GaussianBlur()], p=0.5),
             A.VerticalFlip(p=0.5),
             A.HorizontalFlip(p=0.5),
             A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), max_pixel_value=255.0, p=1.0),
