@@ -24,9 +24,9 @@ class BinaryHead(nn.Module):
         return logit
 
 
-class se_resnet152(nn.Module):
+class fbresnet152(nn.Module):
     def __init__(self):
-        super(se_resnet152, self).__init__()
+        super(fbresnet152, self).__init__()
         
         # Workaround for SSL errors on calling pretrained models
         # https://github.com/pytorch/pytorch/issues/33288#issuecomment-954160699

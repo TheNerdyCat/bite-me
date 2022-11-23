@@ -27,7 +27,7 @@ VAL_BATCH_SIZE = 4
 VERBOSE = True
 
 # Choose model
-MODEL_NAME = "se_resnet152"
+MODEL_NAME = "fbresnet152"
 
 # Number of epochs
 MIN_EPOCHS = 30
@@ -36,7 +36,7 @@ MAX_EPOCHS = 50
 PATIENCE = 11
 
 PRECISION = 16
-GRADIENT_CLIP_VAL = 1.0
+GRADIENT_CLIP_VAL = 0.5
 
 LOG_DIR = "../logs/logs"
 LOG_NAME = str(datetime.datetime.now()).replace("-", "_").replace(" ", "_")[:19]
