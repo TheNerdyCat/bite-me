@@ -30,8 +30,8 @@ VERBOSE = True
 MODEL_NAME = "inceptionv4"
 
 # Number of epochs
-MIN_EPOCHS = 30
-MAX_EPOCHS = 50
+MIN_EPOCHS = 50
+MAX_EPOCHS = 100
 
 PATIENCE = 11
 
@@ -44,7 +44,7 @@ BETAS = (0.9, 0.999)
 
 PRECISION = 16
 GRADIENT_CLIP_VAL = 1.0
-ETA_MIN = 1e-4
+ETA_MIN = 0.00005
 
 LOG_DIR = "../logs/logs"
 LOG_NAME = str(datetime.datetime.now()).replace("-", "_").replace(" ", "_")[:19]
