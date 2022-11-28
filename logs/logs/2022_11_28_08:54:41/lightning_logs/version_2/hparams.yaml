@@ -1,0 +1,30 @@
+amsgrad: false
+backbone: inceptionv4
+betas: !!python/tuple
+- 0.9
+- 0.999
+device_name: NVIDIA GeForce RTX 3090
+epsilon: 1.0e-08
+eta_min: 5.0e-05
+fold_i: 2
+gpus:
+- 0
+gradient_clip_val: 1.0
+image_size:
+- 1024
+- 1024
+log_dir: ../logs/logs
+log_name: '2022_11_28_08:54:41'
+lr: 0.0001
+max_epochs: 100
+min_epochs: 50
+n_splits: 3
+n_workers: 128
+patience: 18
+precision: 16
+seed: 14
+test_size: 0.1
+train_batch_size: 4
+val_batch_size: 4
+verbose: true
+weight_decay: 0

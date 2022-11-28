@@ -30,15 +30,15 @@ VERBOSE = True
 MODEL_NAME = "inceptionv4"
 
 # Number of epochs
-MIN_EPOCHS = 50
-MAX_EPOCHS = 100
+MIN_EPOCHS = 30
+MAX_EPOCHS = 50
 
 PATIENCE = 11
 
 # Optimizer constants
 LEARNING_RATE = 0.0001
 WEIGHT_DECAY = 0
-EPSILON = 1e-08
+EPSILON = 1e-06 #1e-08
 AMSGRAD = False
 BETAS = (0.9, 0.999)
 
