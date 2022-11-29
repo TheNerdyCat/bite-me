@@ -35,16 +35,16 @@ MAX_EPOCHS = 50
 
 PATIENCE = 11
 
-# Optimizer constants
+# Optimizer & learning rate constants
 LEARNING_RATE = 0.0001
 WEIGHT_DECAY = 0
-EPSILON = 1e-06 #1e-08
-AMSGRAD = False
+EPSILON = 1e-10 #1e-08
+AMSGRAD = True
 BETAS = (0.9, 0.999)
+ETA_MIN = 0.00005
 
 PRECISION = 16
 GRADIENT_CLIP_VAL = 1.0
-ETA_MIN = 0.00005
 
 LOG_DIR = "../logs/logs"
 LOG_NAME = str(datetime.datetime.now()).replace("-", "_").replace(" ", "_")[:19]
