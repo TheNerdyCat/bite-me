@@ -24,9 +24,9 @@ class BinaryHead(nn.Module):
         return logit
 
 
-class inceptionv4(nn.Module):
+class inceptionresnetv2(nn.Module):
     def __init__(self):
-        super(inceptionv4, self).__init__()
+        super(inceptionresnetv2, self).__init__()
         
         # Workaround for SSL errors on calling pretrained models
         # https://github.com/pytorch/pytorch/issues/33288#issuecomment-954160699

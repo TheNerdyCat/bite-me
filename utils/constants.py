@@ -27,13 +27,12 @@ VAL_BATCH_SIZE = 4
 VERBOSE = True
 
 # Choose model
-MODEL_NAME = "inceptionv4"
+MODEL_NAME = "inceptionresnetv2"
 
-# Number of epochs
-MIN_EPOCHS = 30
-MAX_EPOCHS = 50
-
-PATIENCE = 11
+# Epochs
+PATIENCE = 20 #11
+MIN_EPOCHS = 80 #30
+MAX_EPOCHS = 100 #50
 
 # Optimizer & learning rate constants
 LEARNING_RATE = 0.0001
