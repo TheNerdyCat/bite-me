@@ -27,20 +27,20 @@ VAL_BATCH_SIZE = 4
 VERBOSE = True
 
 # Choose model
-MODEL_NAME = "inceptionresnetv2"
+MODEL_NAME = "xception"
 
 # Epochs
-PATIENCE = 20 #11
-MIN_EPOCHS = 80 #30
-MAX_EPOCHS = 100 #50
+PATIENCE = 11
+MIN_EPOCHS = 30
+MAX_EPOCHS = 50
 
 # Optimizer & learning rate constants
 LEARNING_RATE = 0.0001
 WEIGHT_DECAY = 0
-EPSILON = 1e-10 #1e-08
+EPSILON = 1e-8 #1e-08
 AMSGRAD = True
 BETAS = (0.9, 0.999)
-ETA_MIN = 0.00005
+ETA_MIN = 0.00005 #0.0001
 
 PRECISION = 16
 GRADIENT_CLIP_VAL = 1.0
