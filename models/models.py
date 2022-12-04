@@ -24,9 +24,9 @@ class BinaryHead(nn.Module):
         return logit
 
 
-class xception(nn.Module):
+class resnext101_32x4d(nn.Module):
     def __init__(self):
-        super(xception, self).__init__()
+        super(resnext101_32x4d, self).__init__()
         
         # Workaround for SSL errors on calling pretrained models
         # https://github.com/pytorch/pytorch/issues/33288#issuecomment-954160699
