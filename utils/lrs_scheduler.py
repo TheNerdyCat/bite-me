@@ -12,7 +12,7 @@ class WarmRestart(lr_scheduler.CosineAnnealingLR):
     This can't support scheduler.step(epoch). Please keep epoch=None.
     """
 
-    def __init__(self, optimizer, T_max=10, T_mult=2, eta_min=0, last_epoch=-1):
+    def __init__(self, optimizer, T_max=15, T_mult=3, eta_min=0, last_epoch=-1):
         """
         Implements SGDR
         
