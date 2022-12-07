@@ -31,7 +31,7 @@ MODEL_NAME = "se_resnext101_32x4d"
 
 # Epochs
 PATIENCE = 11 #11
-MIN_EPOCHS = 75 #30
+MIN_EPOCHS = 50 #30
 MAX_EPOCHS = 100 #50
 
 # Optimizer & learning rate constants
@@ -42,7 +42,7 @@ AMSGRAD = True
 BETAS = (0.9, 0.999)
 ETA_MIN = 0.000005 #0.0001
 T_MAX = 15
-T_MULT = 3
+T_MULT = 6
 
 
 PRECISION = 16
